@@ -25,10 +25,11 @@ function add(scheme) {
     .then(ids => ({ id: ids[0] }));
 }
 
-function update(id, scheme) {
+//note to self: params order must match the router
+function update(change, id) {
   return db("schemes")
     .where("id", Number(id))
-    .update(scheme);
+    .update(change);
 }
 
 function remove(id) {
@@ -38,8 +39,9 @@ function remove(id) {
 }
 
 function findSteps(id) {
-  return db("steps")
-    .join("schemes", "schemes.id", "scheme_id")
-    .select("steps.*", "instructions")
-    .where("steps.id", id);
+  return db("steps").where({ scheme_id: id });
+}
+
+function addStep({ instructions, step_number }, id) {
+  return db("steps").insert({ instructions, step_number, scheme_id: id });
 }
